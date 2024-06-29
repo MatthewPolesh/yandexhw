@@ -1,5 +1,6 @@
 package com.example.todo.UIComponents
 
+import android.content.res.Configuration
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -12,51 +13,53 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.todo.MainViewModel
 import com.example.todo.R
-import com.example.todo.TodoItemsRepository
-import java.util.concurrent.CountDownLatch
+import com.example.todo.UIComponents.Theme.AppTheme
+import com.example.todo.UIComponents.Theme.Blue
 import kotlin.math.min
 
 
 @Composable
 fun Header(
     listState: LazyListState,
-    repository: TodoItemsRepository
+    viewModel: MainViewModel
 ) {
-    val icon = repository.visibleCompleted.collectAsState()
-    val counter = repository.completedItemsCount.collectAsState()
-    val scrollOffset by remember {
+    val icon = viewModel.visibleCompleted.collectAsState()
+    val counter = viewModel.completedItemsCount.collectAsState()
+    val totalScrollOffset by remember {
         derivedStateOf {
-            min(
-                1f,
-                1 - (listState.firstVisibleItemScrollOffset / 600f + listState.firstVisibleItemIndex).coerceAtLeast(
-                    0f
-                )
-            )
+            listState.firstVisibleItemScrollOffset + listState.firstVisibleItemIndex * 500
         }
     }
-    var iconRes = painterResource(id = R.drawable.visibility)
-    when{
-        icon.value -> iconRes = painterResource(id = R.drawable.visibility)
-        !icon.value -> iconRes = painterResource(id = R.drawable.visibility_off)
+    val scrollOffset = min(1f, 1 - (totalScrollOffset / 600f).coerceAtLeast(0f))
+
+    var iconRes = painterResource(id = R.drawable.visibility_off)
+    when {
+        icon.value -> iconRes = painterResource(id = R.drawable.visibility_off)
+        !icon.value -> iconRes = painterResource(id = R.drawable.visibility)
     }
 
     val animatedHeaderHeight by animateDpAsState(
@@ -65,59 +68,92 @@ fun Header(
         )
     )
     val animatedFontSize1 by animateFloatAsState(
-        targetValue = (20.sp * scrollOffset).value.coerceAtLeast(
+        targetValue = (MaterialTheme.typography.titleMedium.fontSize * scrollOffset).value.coerceAtLeast(
             16.sp.value
         )
     )
     val animatedFontSize2 by animateFloatAsState(
-        targetValue = (32.sp * scrollOffset).value.coerceAtLeast(
+        targetValue = (MaterialTheme.typography.titleLarge.fontSize * scrollOffset).value.coerceAtLeast(
             16.sp.value
         )
     )
-
-    val (text, visible) = when {
-        animatedHeaderHeight > 60.dp -> Pair("Выполнено - ${counter.value}", 1f)
-        else -> Pair("Мои дела", 0f)
-    }
-
     Box(
-        modifier = Modifier
-            .padding(
-                top = (40.dp * scrollOffset).coerceAtLeast(5.dp),
-                start = (40.dp * scrollOffset).coerceAtLeast(10.dp),
-            )
-            .fillMaxWidth()
-            .height(animatedHeaderHeight),
-        contentAlignment = Alignment.Center
-    )
-    {
-        Column {
-            Text(
-                text = "Мои дела",
-                fontSize = animatedFontSize2.sp,
-                modifier = Modifier.alpha(visible)
-            )
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.primary)
+                .padding(bottom = (15.dp * scrollOffset).coerceAtLeast(0.dp))
+                .fillMaxWidth()
+                .height(animatedHeaderHeight),
+            contentAlignment = Alignment.Center
+        )
+        {
+            Box(
+                modifier = Modifier
+                    .padding(
+                        top = (40.dp * scrollOffset).coerceAtLeast(5.dp),
+                        start = (40.dp * scrollOffset).coerceAtLeast(10.dp),
+                    ),
+                contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = text,
-                    fontSize = animatedFontSize1.sp
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                Icon(
-                    painter = iconRes,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .clip(shape = CircleShape)
-                        .padding(end = 10.dp)
-                        .clickable { repository.changeVisibility()}
-                )
+                Row(
+                    verticalAlignment = Alignment.Bottom
+                ) {
+                    Column {
+                        Text(
+                            text = "Мои дела",
+                            fontSize = animatedFontSize2.sp,
+                            style = MaterialTheme.typography.titleLarge,
+                            color = MaterialTheme.colorScheme.onPrimary,
+                        )
+                        if (animatedHeaderHeight > 60.dp)
+                            Text(
+                                text = "Выполнено - ${counter.value}",
+                                fontSize = animatedFontSize1.sp,
+                                style = MaterialTheme.typography.titleSmall,
+                                color = MaterialTheme.colorScheme.onTertiary
+                            )
+                    }
+
+                    Spacer(modifier = Modifier.weight(1f))
+                    Icon(
+                        painter = iconRes,
+                        tint = Blue,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .padding(end = 23.dp)
+                            .clip(shape = CircleShape)
+
+                            .clickable { viewModel.changeVisibility() }
+                    )
+                }
             }
-
         }
-
     }
+}
 
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun PreviewHeaderDark() {
+    val listState = rememberLazyListState()
+    val viewModel = MainViewModel()
+    AppTheme {
+        Header(
+            listState,
+            viewModel
+        )
+    }
+}
+
+@Preview()
+@Composable
+fun PreviewHeaderLight() {
+    val listState = rememberLazyListState()
+    val viewModel = MainViewModel()
+    AppTheme {
+        Header(
+            listState,
+            viewModel
+        )
+    }
 }

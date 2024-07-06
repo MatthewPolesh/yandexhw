@@ -50,23 +50,21 @@ class MainActivity : ComponentActivity() {
     private fun checkPermissions() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED ||
             ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED) {
-            // Показываем объяснение, почему нужно разрешение
             showPermissionExplanation()
         } else {
-            // Разрешения уже предоставлены
             onPermissionsGranted()
         }
     }
 
     private fun showPermissionExplanation() {
         AlertDialog.Builder(this)
-            .setTitle("Permissions Required")
-            .setMessage("This app requires Internet and Network State permissions to function properly.")
-            .setPositiveButton("Grant") { dialog, _ ->
+            .setTitle("Требуются разрешения")
+            .setMessage("Это приложение требует разрешений на доступ к Интернету.")
+            .setPositiveButton("Разрешить") { dialog, _ ->
                 dialog.dismiss()
                 requestPermissions()
             }
-            .setNegativeButton("Cancel") { dialog, _ ->
+            .setNegativeButton("Отменить") { dialog, _ ->
                 dialog.dismiss()
                 onPermissionsDenied()
             }

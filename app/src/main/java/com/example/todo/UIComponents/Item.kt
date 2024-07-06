@@ -24,12 +24,17 @@ import com.example.todo.ToDoItem
 import com.example.todo.UIComponents.Theme.AppTheme
 import com.example.todo.UIComponents.Theme.Blue
 import com.example.todo.UIComponents.Theme.Green
+import com.example.todo.UIComponents.Theme.Red
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun Item(
-    item: ToDoItem,
-    onClick: () -> Unit
+    item: ToDoItem, onClick: () -> Unit
 ) {
+    val dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -45,8 +50,7 @@ fun Item(
             Checkbox(
                 checked = item.completed,
                 colors = CheckboxDefaults.colors(
-                    checkedColor = Green,
-                    uncheckedColor = MaterialTheme.colorScheme.onTertiary
+                    checkedColor = Green, uncheckedColor = if (item.importance == "important") Red else MaterialTheme.colorScheme.onTertiary
                 ),
                 onCheckedChange = { onClick() },
             )
@@ -75,9 +79,8 @@ fun Item(
                 )
                 if (item.deadline != null && !item.completed)
                     Text(
-                        text = item.deadline!!,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Blue
+                        text = Instant.ofEpochMilli(item.deadline!!).atZone(ZoneId.systemDefault()).format(dateFormatter),
+                        style = MaterialTheme.typography.bodySmall, color = Blue
                     )
             }
         }

@@ -61,6 +61,7 @@ fun AppTheme(content: @Composable () -> Unit) {
         content = content,
     )
 }
+
 @Preview()
 @Composable
 fun PreviewAppThemeLight() {
@@ -73,7 +74,7 @@ fun PreviewAppThemeLight() {
                             .background(MaterialTheme.colorScheme.primary)
                             .size(100.dp),
                         contentAlignment = Alignment.BottomStart
-                    ){
+                    ) {
                         Text(text = "Primary Back", color = Color.Black)
                     }
                     Box(
@@ -81,7 +82,7 @@ fun PreviewAppThemeLight() {
                             .background(MaterialTheme.colorScheme.secondary)
                             .size(100.dp),
                         contentAlignment = Alignment.BottomStart
-                    ){
+                    ) {
                         Text(text = "Secondary Back", color = Color.Black)
                     }
                     Box(
@@ -89,7 +90,7 @@ fun PreviewAppThemeLight() {
                             .background(MaterialTheme.colorScheme.background)
                             .size(100.dp),
                         contentAlignment = Alignment.BottomStart
-                    ){
+                    ) {
                         Text(text = "Elevated Back", color = Color.Black)
                     }
                 }
@@ -99,7 +100,7 @@ fun PreviewAppThemeLight() {
                             .background(MaterialTheme.colorScheme.onPrimary)
                             .size(100.dp),
                         contentAlignment = Alignment.BottomStart
-                    ){
+                    ) {
                         Text(text = "Primary Label", color = Color.White)
                     }
                     Box(
@@ -107,7 +108,7 @@ fun PreviewAppThemeLight() {
                             .background(MaterialTheme.colorScheme.onSecondary)
                             .size(100.dp),
                         contentAlignment = Alignment.BottomStart
-                    ){
+                    ) {
                         Text(text = "Secondary Label", color = Color.White)
                     }
                     Box(
@@ -115,7 +116,7 @@ fun PreviewAppThemeLight() {
                             .background(MaterialTheme.colorScheme.onBackground)
                             .size(100.dp),
                         contentAlignment = Alignment.BottomStart
-                    ){
+                    ) {
                         Text(text = "Tertiary Label", color = Color.White)
                     }
                 }
@@ -126,7 +127,7 @@ fun PreviewAppThemeLight() {
                             .background(Blue)
                             .size(100.dp),
                         contentAlignment = Alignment.BottomStart
-                    ){
+                    ) {
                         Text(text = "Blue", color = Color.White)
                     }
                     Box(
@@ -134,7 +135,7 @@ fun PreviewAppThemeLight() {
                             .background(Red)
                             .size(100.dp),
                         contentAlignment = Alignment.BottomStart
-                    ){
+                    ) {
                         Text(text = "Red", color = Color.White)
                     }
                     Box(
@@ -142,7 +143,7 @@ fun PreviewAppThemeLight() {
                             .background(Green)
                             .size(100.dp),
                         contentAlignment = Alignment.BottomStart
-                    ){
+                    ) {
                         Text(text = "Green", color = Color.White)
                     }
                     Box(
@@ -150,7 +151,7 @@ fun PreviewAppThemeLight() {
                             .background(Gray)
                             .size(100.dp),
                         contentAlignment = Alignment.BottomStart
-                    ){
+                    ) {
                         Text(text = "Gray", color = Color.White)
                     }
 
@@ -160,7 +161,7 @@ fun PreviewAppThemeLight() {
                         .background(GrayLight)
                         .size(100.dp),
                     contentAlignment = Alignment.BottomStart
-                ){
+                ) {
                     Text(text = "Light Gray", color = Color.Black)
                 }
             }
@@ -182,7 +183,7 @@ fun PreviewAppThemeDark() {
                             .background(MaterialTheme.colorScheme.primary)
                             .size(100.dp),
                         contentAlignment = Alignment.BottomStart
-                    ){
+                    ) {
                         Text(text = "Primary Back", color = Color.White)
                     }
                     Box(
@@ -190,7 +191,7 @@ fun PreviewAppThemeDark() {
                             .background(MaterialTheme.colorScheme.secondary)
                             .size(100.dp),
                         contentAlignment = Alignment.BottomStart
-                    ){
+                    ) {
                         Text(text = "Secondary Back", color = Color.White)
                     }
                     Box(
@@ -198,7 +199,7 @@ fun PreviewAppThemeDark() {
                             .background(MaterialTheme.colorScheme.background)
                             .size(100.dp),
                         contentAlignment = Alignment.BottomStart
-                    ){
+                    ) {
                         Text(text = "Elevated Back", color = Color.White)
                     }
                 }
@@ -208,7 +209,7 @@ fun PreviewAppThemeDark() {
                             .background(MaterialTheme.colorScheme.onPrimary)
                             .size(100.dp),
                         contentAlignment = Alignment.BottomStart
-                    ){
+                    ) {
                         Text(text = "Primary Label", color = Color.Black)
                     }
                     Box(
@@ -216,7 +217,7 @@ fun PreviewAppThemeDark() {
                             .background(MaterialTheme.colorScheme.onSecondary)
                             .size(100.dp),
                         contentAlignment = Alignment.BottomStart
-                    ){
+                    ) {
                         Text(text = "Secondary Label", color = Color.Black)
                     }
                     Box(
@@ -224,7 +225,7 @@ fun PreviewAppThemeDark() {
                             .background(MaterialTheme.colorScheme.onBackground)
                             .size(100.dp),
                         contentAlignment = Alignment.BottomStart
-                    ){
+                    ) {
                         Text(text = "Tertiary Label", color = Color.Black)
                     }
                 }
@@ -235,7 +236,7 @@ fun PreviewAppThemeDark() {
                             .background(Blue)
                             .size(100.dp),
                         contentAlignment = Alignment.BottomStart
-                    ){
+                    ) {
                         Text(text = "Blue", color = Color.White)
                     }
                     Box(
@@ -243,7 +244,7 @@ fun PreviewAppThemeDark() {
                             .background(Red)
                             .size(100.dp),
                         contentAlignment = Alignment.BottomStart
-                    ){
+                    ) {
                         Text(text = "Red", color = Color.White)
                     }
                     Box(
@@ -251,7 +252,7 @@ fun PreviewAppThemeDark() {
                             .background(Green)
                             .size(100.dp),
                         contentAlignment = Alignment.BottomStart
-                    ){
+                    ) {
                         Text(text = "Green", color = Color.White)
                     }
                     Box(
@@ -259,7 +260,7 @@ fun PreviewAppThemeDark() {
                             .background(Gray)
                             .size(100.dp),
                         contentAlignment = Alignment.BottomStart
-                    ){
+                    ) {
                         Text(text = "Gray", color = Color.White)
                     }
 
@@ -269,7 +270,7 @@ fun PreviewAppThemeDark() {
                         .background(GrayLight)
                         .size(100.dp),
                     contentAlignment = Alignment.BottomStart
-                ){
+                ) {
                     Text(text = "Light Gray", color = Color.Black)
                 }
             }

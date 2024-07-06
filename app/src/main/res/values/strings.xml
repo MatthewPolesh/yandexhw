@@ -3,4 +3,12 @@
     <string name="imp_low">Низкая</string>
     <string name="imp_medium">Средняя</string>
     <string name="imp_high">!!Срочная</string>
+    <string name="do_smth">Что надо сделать...</string>
+    <string name="complete">Сделать до</string>
+    <string name="done">Готово</string>
+    <string name="canceled">Отмена</string>
+    <string name="delete">Удалить</string>
+    <string name="new_item">Новое</string>
+    <string name="my_tasks">Мои дела</string>
+    <string name="done_tasks">Выполнено</string>
 </resources>

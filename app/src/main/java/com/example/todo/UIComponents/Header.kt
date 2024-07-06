@@ -15,10 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -30,8 +26,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -77,83 +73,81 @@ fun Header(
             16.sp.value
         )
     )
+
     Box(
-    ) {
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.primary)
+            .padding(bottom = (15.dp * scrollOffset).coerceAtLeast(0.dp))
+            .fillMaxWidth()
+            .height(animatedHeaderHeight),
+        contentAlignment = Alignment.Center
+    )
+    {
         Box(
             modifier = Modifier
-                .background(MaterialTheme.colorScheme.primary)
-                .padding(bottom = (15.dp * scrollOffset).coerceAtLeast(0.dp))
-                .fillMaxWidth()
-                .height(animatedHeaderHeight),
+                .padding(
+                    top = (40.dp * scrollOffset).coerceAtLeast(5.dp),
+                    start = (40.dp * scrollOffset).coerceAtLeast(10.dp),
+                ),
             contentAlignment = Alignment.Center
-        )
-        {
-            Box(
-                modifier = Modifier
-                    .padding(
-                        top = (40.dp * scrollOffset).coerceAtLeast(5.dp),
-                        start = (40.dp * scrollOffset).coerceAtLeast(10.dp),
-                    ),
-                contentAlignment = Alignment.Center
+        ) {
+            Row(
+                verticalAlignment = Alignment.Bottom
             ) {
-                Row(
-                    verticalAlignment = Alignment.Bottom
-                ) {
-                    Column {
-                        Text(
-                            text = "Мои дела",
-                            fontSize = animatedFontSize2.sp,
-                            style = MaterialTheme.typography.titleLarge,
-                            color = MaterialTheme.colorScheme.onPrimary,
-                        )
-                        if (animatedHeaderHeight > 60.dp)
-                            Text(
-                                text = "Выполнено - ${counter.value}",
-                                fontSize = animatedFontSize1.sp,
-                                style = MaterialTheme.typography.titleSmall,
-                                color = MaterialTheme.colorScheme.onTertiary
-                            )
-                    }
-
-                    Spacer(modifier = Modifier.weight(1f))
-                    Icon(
-                        painter = iconRes,
-                        tint = Blue,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .padding(end = 23.dp)
-                            .clip(shape = CircleShape)
-
-                            .clickable { viewModel.changeVisibility() }
+                Column {
+                    Text(
+                        text = stringResource(id = R.string.my_tasks),
+                        fontSize = animatedFontSize2.sp,
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onPrimary,
                     )
+                    if (animatedHeaderHeight > 60.dp)
+                        Text(
+                            text = stringResource(id = R.string.done_tasks) + " - ${counter.value}",
+                            fontSize = animatedFontSize1.sp,
+                            style = MaterialTheme.typography.titleSmall,
+                            color = MaterialTheme.colorScheme.onTertiary
+                        )
                 }
+
+                Spacer(modifier = Modifier.weight(1f))
+                Icon(
+                    painter = iconRes,
+                    tint = Blue,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .padding(end = 23.dp)
+                        .clip(shape = CircleShape)
+
+                        .clickable { viewModel.changeVisibility() }
+                )
             }
         }
     }
 }
 
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-fun PreviewHeaderDark() {
-    val listState = rememberLazyListState()
-    val viewModel = MainViewModel()
-    AppTheme {
-        Header(
-            listState,
-            viewModel
-        )
-    }
-}
-
-@Preview()
-@Composable
-fun PreviewHeaderLight() {
-    val listState = rememberLazyListState()
-    val viewModel = MainViewModel()
-    AppTheme {
-        Header(
-            listState,
-            viewModel
-        )
-    }
-}
+//@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+//@Composable
+//fun PreviewHeaderDark() {
+//    val listState = rememberLazyListState()
+//    val viewModel = MainViewModel()
+//    AppTheme {
+//        Header(
+//            listState,
+//            viewModel
+//        )
+//    }
+//}
+//
+//@Preview()
+//@Composable
+//fun PreviewHeaderLight() {
+//    val listState = rememberLazyListState()
+//    val viewModel = MainViewModel()
+//    AppTheme {
+//        Header(
+//            listState,
+//            viewModel
+//        )
+//    }
+//}

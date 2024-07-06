@@ -7,7 +7,7 @@ data class ToDoItem(
     var importance: Int,
     var completed: Boolean,
     var description: String,
-    var deadline: String,
-    val dateCreated: String,
-    var dateChanged: String
+    var deadline: String?,
+    val dateCreated: String?,
+    var dateChanged: String?
 )

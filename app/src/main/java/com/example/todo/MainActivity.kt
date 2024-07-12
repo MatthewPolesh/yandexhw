@@ -2,54 +2,116 @@ package com.example.todo
 
 import android.Manifest
 import android.app.AlertDialog
-import android.content.Context
 import android.content.pm.PackageManager
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
-import android.net.NetworkRequest
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
-import com.example.todo.Network.*
-import com.example.todo.UIComponents.Navigation.NavGraph
-import com.example.todo.UIComponents.Theme.AppTheme
+import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import com.example.todo.data.network.NetworkUtils
+import com.example.todo.data.network.SyncWorker
+import com.example.todo.di.MyApp
+import com.example.todo.presentation.MainViewModel
+import com.example.todo.presentation.uicomponents.ErrorDialog
+import com.example.todo.presentation.uicomponents.navigation.NavGraph
+import com.example.todo.presentation.uicomponents.theme.AppTheme
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 class MainActivity : ComponentActivity() {
+    @Inject
+    lateinit var networkUtils: NetworkUtils
 
-    private lateinit var connectivityManager: ConnectivityManager
-    private lateinit var networkCallback: NetworkCallback
+    @Inject
+    lateinit var mainViewModel: MainViewModel
+
 
     private val requestPermissionsLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-            if (permissions.all { it.value == true }) {
+            if (permissions.all { it.value }) {
                 onPermissionsGranted()
             } else {
                 onPermissionsDenied()
             }
         }
 
-    private val mainViewModel: MainViewModel = MainViewModel()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val appComp = (applicationContext as MyApp).appComponent
+        val activityComp = appComp.activityComponent().create()
+        activityComp.inject(this)
 
         setContent {
             AppTheme {
                 val navController = rememberNavController()
+                val error by mainViewModel.error.collectAsState()
+                val errorDialog = remember { mutableStateOf(false) }
+
+                LaunchedEffect(error) {
+                    if (error != "Nothing") errorDialog.value = true
+                }
+                if (errorDialog.value) {
+                    ErrorDialog(
+                        showDialog = errorDialog,
+                        error = error,
+                        onErrorAccept = {
+                            mainViewModel.updateError("Nothing")
+                            errorDialog.value = !errorDialog.value
+                        }
+                    )
+                }
+
                 NavGraph(navHostController = navController, mainViewModel)
             }
         }
+        networkUtils = NetworkUtils(applicationContext as MyApp)
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                networkUtils.isNetworkAvailable.collectLatest { isConnected ->
+                    if (isConnected) {
+                        mainViewModel.repository.changeNetworkConnection(isConnected)
+                        mainViewModel.syncData()
+                    } else {
+                        mainViewModel.repository.changeNetworkConnection(isConnected)
 
+                    }
+                }
+            }
+        }
+
+        //TODO("Переделать permissions")
         checkPermissions()
+        //setupPeriodicWork()
     }
 
+
     private fun checkPermissions() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED ||
-            ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.INTERNET
+            ) != PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_NETWORK_STATE
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
             showPermissionExplanation()
         } else {
             onPermissionsGranted()
@@ -77,17 +139,23 @@ class MainActivity : ComponentActivity() {
         )
     }
 
-    private fun onPermissionsGranted() {
-        setupPeriodicWork(this)
-        connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        networkCallback = NetworkCallback {
-        }
 
-        val networkRequest = NetworkRequest.Builder()
-            .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+    private fun setupPeriodicWork() {
+        val workManager = WorkManager.getInstance(this)
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
+        val syncRequest = PeriodicWorkRequestBuilder<SyncWorker>(1, TimeUnit.MINUTES)
+            .setConstraints(constraints)
+            .build()
+        workManager.enqueueUniquePeriodicWork(
+            "SyncWork",
+            ExistingPeriodicWorkPolicy.REPLACE,
+            syncRequest
+        )
+    }
 
-        connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
+    private fun onPermissionsGranted() {
     }
 
     private fun onPermissionsDenied() {
@@ -95,6 +163,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        connectivityManager.unregisterNetworkCallback(networkCallback)
+        networkUtils.unregisterCallback()
+
     }
 }

@@ -20,7 +20,7 @@ val AppTypography = Typography(
         fontWeight = FontWeight.Normal
     ),
     titleSmall = TextStyle(
-        fontSize =  20.sp,
+        fontSize = 20.sp,
         fontFamily = FontFamily(Font(R.font.roboto_light)),
         fontWeight = FontWeight.Light
     ),
@@ -40,4 +40,4 @@ val AppTypography = Typography(
         fontWeight = FontWeight.Normal
     ),
 
-)
+    )

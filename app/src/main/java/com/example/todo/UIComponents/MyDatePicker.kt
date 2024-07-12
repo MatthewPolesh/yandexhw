@@ -20,9 +20,11 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.example.todo.R
 import com.example.todo.UIComponents.Theme.AppTheme
 import com.example.todo.UIComponents.Theme.Blue
 import com.example.todo.UIComponents.Theme.White
@@ -31,8 +33,7 @@ import java.time.LocalDate
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyDatePicker(
-    onDismissRequest: () -> Unit,
-    onDateSelected: (LocalDate) -> Unit
+    onDismissRequest: () -> Unit, onDateSelected: (LocalDate) -> Unit
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
         Surface(
@@ -45,9 +46,7 @@ fun MyDatePicker(
             ) {
                 val datePickerState = rememberDatePickerState(initialSelectedDateMillis = null)
                 DatePicker(
-                    state = datePickerState,
-                    title = null,
-                    colors = DatePickerColors(
+                    state = datePickerState, title = null, colors = DatePickerColors(
                         headlineContentColor = MaterialTheme.colorScheme.onPrimary,
                         selectedDayContentColor = White,
                         selectedYearContainerColor = Blue,
@@ -85,12 +84,11 @@ fun MyDatePicker(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
+                    modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End
                 ) {
                     TextButton(onClick = onDismissRequest) {
                         Text(
-                            text = "ОТМЕНА",
+                            text = stringResource(id = R.string.canceled),
                             style = MaterialTheme.typography.bodyLarge,
                             color = Blue
                         )
@@ -101,7 +99,7 @@ fun MyDatePicker(
                         }
                     }) {
                         Text(
-                            text = "ГОТОВО",
+                            text = stringResource(id = R.string.done),
                             style = MaterialTheme.typography.bodyLarge,
                             color = Blue
                         )
@@ -117,10 +115,7 @@ fun MyDatePicker(
 @Composable
 fun PreviewMyDatePickerDark() {
     AppTheme {
-        MyDatePicker(
-            onDismissRequest = { Unit }
-        ) {
-        }
+        MyDatePicker(onDismissRequest = { Unit }) {}
     }
 }
 
@@ -128,9 +123,6 @@ fun PreviewMyDatePickerDark() {
 @Composable
 fun PreviewMyDatePickerLight() {
     AppTheme {
-        MyDatePicker(
-            onDismissRequest = { Unit }
-        ) {
-        }
+        MyDatePicker(onDismissRequest = { Unit }) {}
     }
 }

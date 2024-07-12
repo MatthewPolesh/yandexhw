@@ -27,7 +27,6 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.todo.Importance
 import com.example.todo.MainViewModel
 import com.example.todo.R
 import com.example.todo.ToDoItem
@@ -39,21 +38,17 @@ import com.example.todo.UIComponents.Theme.Red
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DismissSwiper(
-    item: ToDoItem,
-    viewModel: MainViewModel,
-    OnClick: () -> Unit
+    item: ToDoItem, viewModel: MainViewModel, onClick: () -> Unit
 ) {
     val dismissState = rememberSwipeToDismissBoxState()
     val deletedFlag = remember { mutableStateOf(false) }
     val (icon, alignment) = when (dismissState.targetValue) {
         SwipeToDismissBoxValue.StartToEnd -> Pair(
-            R.drawable.check,
-            Alignment.CenterStart
+            R.drawable.check, Alignment.CenterStart
         )
 
         SwipeToDismissBoxValue.EndToStart -> Pair(
-            R.drawable.delete,
-            Alignment.CenterEnd
+            R.drawable.delete, Alignment.CenterEnd
         )
 
         else -> Pair(R.drawable.info, Alignment.CenterEnd)
@@ -78,12 +73,10 @@ fun DismissSwiper(
         }, label = ""
     )
     val scale by animateFloatAsState(
-        if (dismissState.targetValue == SwipeToDismissBoxValue.Settled) 1f else 1.25f,
-        label = ""
+        if (dismissState.targetValue == SwipeToDismissBoxValue.Settled) 1f else 1.25f, label = ""
     )
 
-    SwipeToDismissBox(
-        state = dismissState,
+    SwipeToDismissBox(state = dismissState,
         backgroundContent = {
             Box(
                 modifier = Modifier
@@ -91,25 +84,22 @@ fun DismissSwiper(
                     .background(color)
                     .fillMaxSize(),
                 contentAlignment = alignment,
-            )
-            {
-                Icon(
-                    painter = painterResource(id = icon),
+            ) {
+                Icon(painter = painterResource(id = icon),
                     tint = MaterialTheme.colorScheme.onTertiary,
                     contentDescription = null,
                     modifier = Modifier
                         .scale(scale)
                         .padding(horizontal = 10.dp)
                         .padding(vertical = 5.dp)
-                        .clickable { OnClick() }
-                )
+                        .clickable { onClick() })
             }
         },
         enableDismissFromEndToStart = viewModel.itemsList.value.contains(item),
         enableDismissFromStartToEnd = !item.completed,
         content = {
             Item(item, onClick = {
-                viewModel.changeItem(item)
+                viewModel.completeItem(item)
                 viewModel.checkCompleted()
             })
         }
@@ -119,30 +109,22 @@ fun DismissSwiper(
 
 
 val previewToDoItem =
-    ToDoItem("1", Importance.Low.description, true, "Мое дело 1", null, null, null)
+    ToDoItem("1", "!!Срочная", false, "Мое дело 1", 0, 0, null, "1")
 
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-fun PreviewDismissSwiperDark() {
-    val viewModel = MainViewModel()
-    AppTheme {
-        DismissSwiper(
-            item = previewToDoItem,
-            viewModel = viewModel,
-            OnClick = {}
-        )
-    }
-}
-
-@Preview()
-@Composable
-fun PreviewDismissSwiperLight() {
-    val viewModel = MainViewModel()
-    AppTheme {
-        DismissSwiper(
-            item = previewToDoItem,
-            viewModel = viewModel,
-            OnClick = {}
-        )
-    }
-}
+//@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+//@Composable
+//fun PreviewDismissSwiperDark() {
+//    val viewModel = MainViewModel()
+//    AppTheme {
+//        DismissSwiper(item = previewToDoItem, viewModel = viewModel, onClick = {})
+//    }
+//}
+//
+//@Preview()
+//@Composable
+//fun PreviewDismissSwiperLight() {
+//    val viewModel = MainViewModel()
+//    AppTheme {
+//        DismissSwiper(item = previewToDoItem, viewModel = viewModel, onClick = {})
+//    }
+//}

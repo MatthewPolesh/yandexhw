@@ -29,7 +29,8 @@ fun ErrorDialog(
                 text = "Информация об ошибке",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onPrimary
-            )},
+            )
+        },
         text = {
             Box {
                 (if (viewModel.error.value != null) viewModel.error.value else "Неопознанная ошибка")?.let {
@@ -39,7 +40,8 @@ fun ErrorDialog(
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                 }
-        }},
+            }
+        },
         onDismissRequest = { showDialog.value = !showDialog.value },
         dismissButton = {
             Text(
@@ -51,27 +53,28 @@ fun ErrorDialog(
                     showDialog.value = !showDialog.value
 
                 }
-            )},
+            )
+        },
         confirmButton = { /*TODO*/ }
     )
 }
 
-@Preview( uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-fun PreviewErrorDialogDark(){
-    val showDialog = remember { mutableStateOf(false) }
-    val viewModel = MainViewModel()
-    AppTheme {
-        ErrorDialog(showDialog = showDialog, viewModel = viewModel)
-    }
-}
-
-@Preview()
-@Composable
-fun PreviewErrorDialogLight(){
-    val showDialog = remember { mutableStateOf(false) }
-    val viewModel = MainViewModel()
-    AppTheme {
-        ErrorDialog(showDialog = showDialog, viewModel = viewModel)
-    }
-}
+//@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+//@Composable
+//fun PreviewErrorDialogDark() {
+//    val showDialog = remember { mutableStateOf(false) }
+//    val viewModel = MainViewModel()
+//    AppTheme {
+//        ErrorDialog(showDialog = showDialog, viewModel = viewModel)
+//    }
+//}
+//
+//@Preview()
+//@Composable
+//fun PreviewErrorDialogLight() {
+//    val showDialog = remember { mutableStateOf(false) }
+//    val viewModel = MainViewModel()
+//    AppTheme {
+//        ErrorDialog(showDialog = showDialog, viewModel = viewModel)
+//    }
+//}

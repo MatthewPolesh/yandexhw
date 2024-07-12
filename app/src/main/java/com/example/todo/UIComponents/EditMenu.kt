@@ -2,7 +2,6 @@ package com.example.todo.UIComponents
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -35,6 +34,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.todo.R
@@ -45,6 +45,12 @@ import com.example.todo.UIComponents.Theme.Blue
 import com.example.todo.UIComponents.Theme.DarkBlue
 import com.example.todo.UIComponents.Theme.Gray
 import com.example.todo.UIComponents.Theme.Red
+import java.time.Instant
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
+import java.util.concurrent.ThreadLocalRandom
+import kotlin.math.absoluteValue
 import kotlin.random.Random
 
 @SuppressLint("SuspiciousIndentation")
@@ -52,31 +58,38 @@ import kotlin.random.Random
 @Composable
 fun EditMenu(
     item: ToDoItem,
-    OnDismissRequest: () -> Unit,
-    OnSaveRequest: (ToDoItem) -> Unit
+    onDismissRequest: () -> Unit,
+    onSaveRequest: (ToDoItem) -> Unit,
+    onDeleteRequest: (ToDoItem) -> Unit,
+    onUpdateRequest: (ToDoItem) -> Unit
 ) {
-    val newText = remember { mutableStateOf(item.description) }
+
+    var description by remember { mutableStateOf(item.description) }
+    var deadLine by remember { mutableStateOf(item.deadline) }
+    var selectedImportance by remember { mutableStateOf(item.importance) }
     var checked by remember { mutableStateOf(false) }
     var showDatePicker by remember { mutableStateOf(false) }
-    var selectedDate by remember { mutableStateOf(item.deadline) }
-    var selectedImportance by remember { mutableStateOf(item.importance) }
+    val dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
 
 
     var dateText = ""
-    if (selectedDate != null && selectedDate != "") {
-        dateText = "${selectedDate.toString()}"
-    } else
+    if (deadLine != null) {
+        dateText = Instant.ofEpochMilli(deadLine!!).atZone(ZoneId.systemDefault()).format(dateFormatter)
+    } else{
         dateText = ""
+    }
+
 
     if (showDatePicker) {
         MyDatePicker(
             onDismissRequest = {
                 showDatePicker = false
-                checked = false},
-            onDateSelected = {
-                selectedDate = it.toString()
-                showDatePicker = false
                 checked = false
+            },
+            onDateSelected = {
+                deadLine = it.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
+                showDatePicker = false
+                checked = true
             }
         )
     }
@@ -99,7 +112,7 @@ fun EditMenu(
                     painter = painterResource(id = R.drawable.close),
                     tint = MaterialTheme.colorScheme.onPrimary,
                     contentDescription = null,
-                    modifier = Modifier.clickable { OnDismissRequest() }
+                    modifier = Modifier.clickable { onDismissRequest() }
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
@@ -107,18 +120,26 @@ fun EditMenu(
                     color = Blue,
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.clickable {
-                        val newItem =
-                            selectedDate?.let {
-                                item.copy(
-                                    id = if (item.id == "0") Random(1234).nextInt().toString() else item.id,
-                                    description = newText.value,
-                                    deadline = it,
-                                    importance = selectedImportance
+                        if (item.id != "0")
+                        {
+                            var newItem = item.copy(
+                                id = item.id,
+                                importance = selectedImportance,
+                                completed = false,
+                                description = description,
+                                deadline = deadLine,
                                 )
-                            }; if (newItem != null) {
-                        Log.d("MyTag", "$newItem")
-                        OnSaveRequest(newItem)
-                    }
+                            onUpdateRequest(newItem)
+                        } else {
+                            var newItem = item.copy(
+                                id = ThreadLocalRandom.current().nextInt().toString(),
+                                importance = selectedImportance,
+                                completed = false,
+                                description = description,
+                                deadline = deadLine,
+                            )
+                            onSaveRequest(newItem)
+                        }
                     }
                 )
             }
@@ -128,12 +149,12 @@ fun EditMenu(
                     .shadow(5.dp, RoundedCornerShape(10.dp))
             ) {
                 TextField(
-                    value = newText.value,
-                    onValueChange = { newText.value = it },
+                    value = description,
+                    onValueChange = { description = it },
                     textStyle = MaterialTheme.typography.titleMedium.copy(color = MaterialTheme.colorScheme.onPrimary),
                     placeholder = {
                         Text(
-                            text = "Что надо сделать...",
+                            text = stringResource(id = R.string.do_smth),
                             style = MaterialTheme.typography.titleSmall,
                             color = MaterialTheme.colorScheme.onTertiary
                         )
@@ -167,7 +188,7 @@ fun EditMenu(
                     Column(
                     ) {
                         Text(
-                            text = "Сделать до",
+                            text = stringResource(id = R.string.complete),
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onPrimary,
 
@@ -190,17 +211,19 @@ fun EditMenu(
                             uncheckedBorderColor = Color.Transparent
                         ),
                         onCheckedChange = {
-
-                            checked = it; if (selectedDate == null) showDatePicker =
-                            !showDatePicker else {
-                            selectedDate = null;showDatePicker = !showDatePicker
-                        }
+                            checked = it
+                            if (deadLine == null){
+                                showDatePicker = !showDatePicker
+                            } else {
+                                deadLine = null
+                                showDatePicker = !showDatePicker
+                            }
                         })
                 }
             }
             HorizontalDivider(modifier = Modifier.padding(vertical = 10.dp))
             Box(
-                modifier = Modifier.clickable { OnDismissRequest() }
+                modifier = Modifier.clickable { onDeleteRequest(item) }
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically
@@ -212,7 +235,7 @@ fun EditMenu(
                         contentDescription = null
                     )
                     Text(
-                        text = "Удалить",
+                        text = stringResource(id = R.string.delete),
                         style = MaterialTheme.typography.bodyLarge,
                         color = Red,
                     )
@@ -226,23 +249,29 @@ fun EditMenu(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun PreviewEditMenuDark() {
+    val item = ToDoItem("0", "0", false, "", 0, 0, 0, "1")
     AppTheme {
         EditMenu(
-            item = previewToDoItem,
-            OnDismissRequest = { Unit }
-        ) {
-        }
+            item,
+            onDismissRequest = {},
+            onDeleteRequest = {},
+            onSaveRequest = {},
+            onUpdateRequest = {}
+        )
     }
 }
 
 @Preview()
 @Composable
 fun PreviewEditMenuLight() {
+    val item = ToDoItem("0", "0", false, "", 0, 0, 0,"1")
     AppTheme {
         EditMenu(
-            item = previewToDoItem,
-            OnDismissRequest = { Unit }
-        ) {
-        }
+            item,
+            onDismissRequest = {},
+            onDeleteRequest = {},
+            onSaveRequest = {},
+            onUpdateRequest = {}
+        )
     }
 }

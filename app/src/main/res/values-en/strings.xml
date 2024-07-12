@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">ToDoList</string>
+    <string name="imp_low">Low</string>
+    <string name="imp_medium">Medium</string>
+    <string name="imp_high">!!Important</string>
+    <string name="do_smth">What to do...</string>
+    <string name="complete">Complete by</string>
+    <string name="done">Done</string>
+    <string name="canceled">Canceled</string>
+    <string name="delete">Delete</string>
+    <string name="new_item">Create</string>
+    <string name="my_tasks">My tasks</string>
+    <string name="done_tasks">Done</string>
+</resources>

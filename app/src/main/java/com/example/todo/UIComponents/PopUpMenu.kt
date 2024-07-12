@@ -15,19 +15,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
-import com.example.todo.R
 import com.example.todo.UIComponents.Theme.AppTheme
 import com.example.todo.UIComponents.Theme.Red
 
 @Composable
 fun PopUpMenu(
-    OnClick: (Int) -> Unit
+    OnClick: (String) -> Unit
 ) {
-    val list = listOf(R.string.imp_low, R.string.imp_medium, R.string.imp_high)
+    val list = listOf("low", "basic", "important")
     val expanded = remember { mutableStateOf(false) }
     val current_value = remember { mutableStateOf(list[0]) }
 
@@ -38,9 +36,13 @@ fun PopUpMenu(
             color = MaterialTheme.colorScheme.onPrimary,
         )
         Text(
-            text = stringResource(id = current_value.value),
+            text = when(current_value.value){
+                "low" -> "Низкая"
+                "basic" -> "Средняя"
+                "important" -> "!!Срочная"
+                else -> "Низкая"},
             style = MaterialTheme.typography.bodySmall,
-            color = if (current_value.value == R.string.imp_high) {
+            color = if (current_value.value == "important") {
                 Red
             } else {
                 MaterialTheme.colorScheme.onTertiary
@@ -64,18 +66,22 @@ fun PopUpMenu(
                             OnClick(item)
                             expanded.value = false
                             current_value.value = item
-                        },
-                            text = {
-                                Text(
-                                    text = stringResource(id = item),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = if (item == R.string.imp_high) {
-                                        Red
-                                    } else {
-                                        MaterialTheme.colorScheme.onPrimary
-                                    }
-                                )
-                            })
+                        }, text = {
+                            Text(
+                                text = when(item){
+                                    "low" -> "Низкая"
+                                    "basic" -> "Средняя"
+                                    "important" -> "!!Срочная"
+                                    else -> {"Низкая"}
+                                },
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = if (item == "!!Срочная") {
+                                    Red
+                                } else {
+                                    MaterialTheme.colorScheme.onPrimary
+                                }
+                            )
+                        })
                     }
                 }
             }
@@ -87,8 +93,7 @@ fun PopUpMenu(
 @Composable
 fun PreviewPopUpMenuDark() {
     AppTheme {
-        PopUpMenu() {
-        }
+        PopUpMenu() {}
     }
 }
 
@@ -96,7 +101,6 @@ fun PreviewPopUpMenuDark() {
 @Composable
 fun PreviewPopUpMenuLight() {
     AppTheme {
-        PopUpMenu() {
-        }
+        PopUpMenu() {}
     }
 }

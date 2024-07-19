@@ -1,14 +1,32 @@
 <resources>
     <string name="app_name">ToDoList</string>
+    <!--Importance-->
     <string name="imp_low">Low</string>
     <string name="imp_medium">Medium</string>
     <string name="imp_high">!!Important</string>
-    <string name="do_smth">What to do...</string>
-    <string name="complete">Complete by</string>
+    <!--Main Menu-->
     <string name="done">Done</string>
-    <string name="canceled">Canceled</string>
-    <string name="delete">Delete</string>
-    <string name="new_item">Create</string>
+    <string name="canceled">Cancel</string>
+    <string name="new_item">New</string>
     <string name="my_tasks">My tasks</string>
-    <string name="done_tasks">Done</string>
+    <string name="done_tasks">Completed</string>
+    <string name="delete_item">Delete task:</string>
+    <!--Edit Menu-->
+    <string name="save">Save</string>
+    <string name="do_smth">What to do...</string>
+    <string name="importance">Importance</string>
+    <string name="complete">Complete by</string>
+    <string name="delete">Delete</string>
+    <!--Setting Menu-->
+    <string name="settings">Settings</string>
+    <string name="theme">Theme</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_system">System default</string>
+    <!--About Menu-->
+    <string name="about_app">About the app</string>
+    <string name="developer">Developer:</string>
+    <string name="dev_name">Poleshchuk M.S.</string>
+    <string name="about_text">The mobile application allows users to easily create and manage their notes and tasks. It provides a convenient interface for adding, editing, and deleting tasks, helping to organize daily tasks and important events.</string>
+
 </resources>

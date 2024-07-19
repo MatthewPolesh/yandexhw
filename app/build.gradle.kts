@@ -3,7 +3,6 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.jetbrainsKotlinKapt)
-    id("kotlin-kapt")
 }
 android {
     namespace = "com.example.todo"
@@ -55,6 +54,14 @@ android {
 }
 
 dependencies {
+    //Divkit
+    implementation("com.yandex.div:div:30.9.0")
+    implementation("com.yandex.div:div-core:30.9.0")
+    implementation("com.yandex.div:div-json:30.9.0")
+
+    //Picasso
+    implementation("com.yandex.div:picasso:30.9.0")
+    implementation("com.yandex.div:glide:30.9.0")
     //Compose Material3
     implementation("androidx.compose.material3:material3-android:1.2.1")
     implementation("com.google.android.material:material:1.12.0")

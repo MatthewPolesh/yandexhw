@@ -1,6 +1,7 @@
 package com.example.todo
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -13,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
 import androidx.work.Constraints
@@ -22,12 +24,12 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.todo.data.network.NetworkUtils
 import com.example.todo.data.network.SyncWorker
-import com.example.todo.di.MyApp
 import com.example.todo.presentation.MainViewModel
 import com.example.todo.presentation.uicomponents.ErrorDialog
 import com.example.todo.presentation.uicomponents.navigation.NavGraph
 import com.example.todo.presentation.uicomponents.theme.AppTheme
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -52,34 +54,17 @@ class MainActivity : ComponentActivity() {
         }
 
 
+    @SuppressLint("StateFlowValueCalledInComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val appComp = (applicationContext as MyApp).appComponent
         val activityComp = appComp.activityComponent().create()
         activityComp.inject(this)
+        mainViewModel.getThemeSettings(this)
 
         setContent {
-            AppTheme {
-                val navController = rememberNavController()
-                val error by mainViewModel.error.collectAsState()
-                val errorDialog = remember { mutableStateOf(false) }
-
-                LaunchedEffect(error) {
-                    if (error != "Nothing") errorDialog.value = true
-                }
-                if (errorDialog.value) {
-                    ErrorDialog(
-                        showDialog = errorDialog,
-                        error = error,
-                        onErrorAccept = {
-                            mainViewModel.updateError("Nothing")
-                            errorDialog.value = !errorDialog.value
-                        }
-                    )
-                }
-
-                NavGraph(navHostController = navController, mainViewModel)
-            }
+            val navController = rememberNavController()
+            NavGraph(navHostController = navController, mainViewModel, this)
         }
         networkUtils = NetworkUtils(applicationContext as MyApp)
         lifecycleScope.launch {
@@ -90,7 +75,7 @@ class MainActivity : ComponentActivity() {
                         mainViewModel.syncData()
                     } else {
                         mainViewModel.repository.changeNetworkConnection(isConnected)
-
+                        mainViewModel.getItemList()
                     }
                 }
             }

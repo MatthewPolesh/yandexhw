@@ -286,7 +286,7 @@ class TodoItemsRepository @Inject constructor(
                     return@withContext Result.failure(Exception("Неудалось синхронизировать данные."))
                 }
             } else {
-                updateBDItemList()
+                getItemList()
                 getRevision()
                 Result.success(Unit)
             }

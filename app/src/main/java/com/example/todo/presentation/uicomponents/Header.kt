@@ -1,5 +1,6 @@
 package com.example.todo.presentation.uicomponents
 
+import android.content.res.Configuration
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -25,9 +27,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.todo.R
+import com.example.todo.domain.ThemeSettings
+import com.example.todo.presentation.MainViewModel
+import com.example.todo.presentation.uicomponents.theme.AppTheme
 import com.example.todo.presentation.uicomponents.theme.Blue
 import kotlin.math.min
 
@@ -37,7 +43,8 @@ fun Header(
     listState: LazyListState,
     counter: Int,
     visibility: Boolean,
-    onVisibilityRequest: (Boolean) -> Unit
+    onVisibilityRequest: (Boolean) -> Unit,
+    onSettingsRequest:() -> Unit
 ) {
     var icon = visibility
     val totalScrollOffset by remember {
@@ -106,45 +113,63 @@ fun Header(
                 }
 
                 Spacer(modifier = Modifier.weight(1f))
-                Icon(
-                    painter = iconRes,
-                    tint = Blue,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .padding(end = 23.dp)
-                        .clip(shape = CircleShape)
-                        .clickable {
-                            icon = !icon
-                            onVisibilityRequest(icon)
-                        }
-                )
+                Row {
+                    Icon(
+                        painter = iconRes,
+                        tint = Blue,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .padding(end = 23.dp)
+                            .clip(shape = CircleShape)
+                            .clickable {
+                                icon = !icon
+                                onVisibilityRequest(icon)
+                            }
+                    )
+                    Icon(
+                        painter = painterResource(id = R.drawable.settings),
+                        tint = Blue,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .padding(end = 23.dp)
+                            .clip(shape = CircleShape)
+                            .clickable {
+                                onSettingsRequest()
+                            }
+                    )
+                }
+
             }
         }
     }
 }
 
-//@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-//@Composable
-//fun PreviewHeaderDark() {
-//    val listState = rememberLazyListState()
-//    val viewModel = MainViewModel()
-//    AppTheme {
-//        Header(
-//            listState,
-//            viewModel
-//        )
-//    }
-//}
-//
-//@Preview()
-//@Composable
-//fun PreviewHeaderLight() {
-//    val listState = rememberLazyListState()
-//    val viewModel = MainViewModel()
-//    AppTheme {
-//        Header(
-//            listState,
-//            viewModel
-//        )
-//    }
-//}
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun PreviewHeaderDark() {
+    AppTheme(ThemeSettings.DARK) {
+        Header(
+            rememberLazyListState(),
+            0,
+            false,
+            onVisibilityRequest = {},
+            onSettingsRequest = {}
+        )
+    }
+}
+
+@Preview()
+@Composable
+fun PreviewHeaderLight() {
+    AppTheme(ThemeSettings.LIGHT) {
+        Header(
+            rememberLazyListState(),
+            0,
+            false,
+            onVisibilityRequest = {},
+            onSettingsRequest = {}
+        )
+    }
+}
+
+

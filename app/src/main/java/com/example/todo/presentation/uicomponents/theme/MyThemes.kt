@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.todo.domain.ThemeSettings
 
 val DarkColorScheme = darkColorScheme(
     primary = BackPrimaryDark,
@@ -50,12 +51,14 @@ val LightColorScheme = lightColorScheme(
 
 @SuppressLint("ResourceAsColor")
 @Composable
-fun AppTheme(content: @Composable () -> Unit) {
+fun AppTheme(
+    themeSettings: ThemeSettings,
+    content: @Composable () -> Unit) {
     MaterialTheme(
-        colorScheme = if (isSystemInDarkTheme()) {
-            DarkColorScheme
-        } else {
-            LightColorScheme
+        colorScheme = when (themeSettings) {
+            ThemeSettings.LIGHT -> LightColorScheme
+            ThemeSettings.DARK -> DarkColorScheme
+            ThemeSettings.SYSTEM -> if(isSystemInDarkTheme()) DarkColorScheme else LightColorScheme
         },
         typography = AppTypography,
         content = content,
@@ -65,7 +68,7 @@ fun AppTheme(content: @Composable () -> Unit) {
 @Preview()
 @Composable
 fun PreviewAppThemeLight() {
-    AppTheme {
+    AppTheme(ThemeSettings.LIGHT) {
         Surface(modifier = Modifier.fillMaxSize()) {
             Column {
                 Row {
@@ -174,7 +177,7 @@ fun PreviewAppThemeLight() {
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun PreviewAppThemeDark() {
-    AppTheme {
+    AppTheme(ThemeSettings.DARK) {
         Surface(modifier = Modifier.fillMaxSize()) {
             Column {
                 Row {

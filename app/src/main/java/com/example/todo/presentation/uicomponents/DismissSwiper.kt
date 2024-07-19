@@ -2,12 +2,14 @@ package com.example.todo.presentation.uicomponents
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -37,7 +39,7 @@ fun DismissSwiper(
     completeFlag: Boolean,
     onClickInfoRequest: () -> Unit,
     onAcceptRequest: () -> Unit,
-    onDeleteRequest: () -> Unit,
+    onDeleteRequest: @Composable () -> Unit,
     onClickCheckboxRequest: () -> Unit
 ) {
     val dismissState = rememberSwipeToDismissBoxState()
@@ -94,7 +96,10 @@ fun DismissSwiper(
                         .scale(scale)
                         .padding(horizontal = 10.dp)
                         .padding(vertical = 5.dp)
-                        .clickable { onClickInfoRequest() }
+                        .padding(5.dp)
+                        .clickable {
+                            onClickInfoRequest();
+                        }
                 )
             }
         },

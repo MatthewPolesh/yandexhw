@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.todo.domain.ThemeSettings
 import com.example.todo.domain.ToDoItem
 import com.example.todo.presentation.uicomponents.theme.AppTheme
 import com.example.todo.presentation.uicomponents.theme.Blue
@@ -91,7 +92,7 @@ fun Item(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
 @Composable
 fun PreviewItemDark() {
-    AppTheme {
+    AppTheme(ThemeSettings.DARK) {
         Item(
             previewToDoItem,
         ) {}
@@ -101,7 +102,7 @@ fun PreviewItemDark() {
 @Preview(showBackground = true)
 @Composable
 fun PreviewItemLight() {
-    AppTheme {
+    AppTheme(ThemeSettings.LIGHT) {
         Item(
             previewToDoItem,
         ) {}

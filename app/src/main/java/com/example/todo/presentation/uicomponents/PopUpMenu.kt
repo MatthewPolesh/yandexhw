@@ -19,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import com.example.todo.domain.Importance
+import com.example.todo.domain.ThemeSettings
 import com.example.todo.presentation.uicomponents.theme.AppTheme
 import com.example.todo.presentation.uicomponents.theme.Red
 
@@ -94,7 +95,7 @@ fun PopUpMenu(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
 @Composable
 fun PreviewPopUpMenuDark() {
-    AppTheme {
+    AppTheme(ThemeSettings.DARK) {
         PopUpMenu(importance = "basic", onClick = {})
     }
 }
@@ -102,7 +103,7 @@ fun PreviewPopUpMenuDark() {
 @Preview(showBackground = true)
 @Composable
 fun PreviewPopUpMenuLight() {
-    AppTheme {
+    AppTheme(ThemeSettings.LIGHT) {
         PopUpMenu(importance = "basic", onClick = {})
     }
 }

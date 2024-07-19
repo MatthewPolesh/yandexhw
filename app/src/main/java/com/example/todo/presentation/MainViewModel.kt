@@ -1,8 +1,11 @@
 package com.example.todo.presentation
 
+import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.todo.data.repositories.TodoItemsRepository
+import com.example.todo.domain.ThemeSettings
 import com.example.todo.domain.ToDoItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -36,6 +39,9 @@ interface MyViewModel {
     fun updateNetItemList()
     fun changeSelectedItem(item: ToDoItem)
     fun syncData()
+
+    fun getThemeSettings(context: Context)
+    fun setThemeSettings(context: Context, themeSettings: ThemeSettings)
 }
 
 class MainViewModel @Inject constructor(val repository: TodoItemsRepository) : ViewModel(),
@@ -47,8 +53,28 @@ class MainViewModel @Inject constructor(val repository: TodoItemsRepository) : V
     val selectedItem = _selectedItem.asStateFlow()
     private val _error = MutableStateFlow("Nothing")
     val error = _error.asStateFlow()
+    private val _settings: MutableStateFlow<ThemeSettings> = MutableStateFlow(ThemeSettings.SYSTEM)
+    val settings = _settings.asStateFlow()
+
     override fun changeSelectedItem(item: ToDoItem) {
         _selectedItem.value = item
+    }
+
+    override fun getThemeSettings(context: Context) {
+        val prefs = context.getSharedPreferences("theme_prefs", Context.MODE_PRIVATE)
+        val themeName = prefs.getString("theme", ThemeSettings.SYSTEM.name) ?: ThemeSettings.SYSTEM.name
+        Log.d("MyLog","ThemeName: $themeName  and value: ${ThemeSettings.valueOf(themeName)}")
+        _settings.value = ThemeSettings.valueOf(themeName)
+    }
+
+    override fun setThemeSettings(context: Context, themeSettings: ThemeSettings) {
+        val prefs = context.getSharedPreferences("theme_prefs", Context.MODE_PRIVATE)
+        with(prefs.edit()) {
+            putString("theme", themeSettings.name)
+            apply()
+        }
+        Log.d("MyLog","Theme Settings Saved")
+        getThemeSettings(context)
     }
 
     override fun addItem(

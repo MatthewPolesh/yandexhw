@@ -25,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.todo.R
+import com.example.todo.domain.ThemeSettings
 import com.example.todo.presentation.uicomponents.theme.AppTheme
 import com.example.todo.presentation.uicomponents.theme.Blue
 import com.example.todo.presentation.uicomponents.theme.White
@@ -114,7 +115,7 @@ fun MyDatePicker(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun PreviewMyDatePickerDark() {
-    AppTheme {
+    AppTheme(ThemeSettings.DARK) {
         MyDatePicker(onDismissRequest = { Unit }) {}
     }
 }
@@ -122,7 +123,7 @@ fun PreviewMyDatePickerDark() {
 @Preview()
 @Composable
 fun PreviewMyDatePickerLight() {
-    AppTheme {
+    AppTheme(ThemeSettings.LIGHT) {
         MyDatePicker(onDismissRequest = { Unit }) {}
     }
 }
